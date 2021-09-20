@@ -58,7 +58,6 @@ void Capture::run(){
             data.setTimeStamp(QString(timeString));
             data.setDataLength(len);
             data.setPackagePointer(pkt_data,len);
-
             data.setPackageInfo(info);
             emit send(data);
             number_package++;
@@ -224,29 +223,99 @@ int Capture::tcpPackageHandle(const u_char *pkt_content,QString &info,int ipPack
     QString proSend = "";
     QString proRecv = "";
     int type = 3;
-    int tcpPayLoad = ipPackage - ((tcp->header_length >> 4) * 4);
-    if(src == 443 || des == 443){
+    int delta = (tcp->header_length >> 4) * 4;
+    int tcpPayLoad = ipPackage - delta;
+    if((src == 443 || des == 443) && (tcpPayLoad > 0)){
         if(src == 443)
             proSend = "(https)";
         else proRecv = "(https)";
+        u_char *ssl;
+        ssl = (u_char*)(pkt_content + 14 + 20 + delta);
+        u_char isTls = *(ssl);
+        ssl++;
+        u_short*pointer = (u_short*)(ssl);
+        u_short version = ntohs(*pointer);
+        if(isTls >= 20 && isTls <= 23 && version >= 0x0301 && version <= 0x0304){
+            type = 6;
+            switch(isTls){
+            case 20:{
+                info = "Change Cipher Spec";
+                break;
+            }
+            case 21:{
+                info = "Alert";
+                break;
+            }
+            case 22:{
+                info = "Handshake";
+                ssl += 4;
+                u_char type = (*ssl);
+                switch (type) {
+                case 1: {
+                    info += " Client Hello";
+                    break;
+                }
+                case 2: {
+                    info += " Server hello";
+                    break;
+                }
+                case 4: {
+                    info += " New Session Ticket";
+                    break;
+                }
+                case 11:{
+                    info += " Certificate";
+                    break;
+                }
+                case 16:{
+                    info += " Client Key Exchange";
+                    break;
+                }
+                case 12:{
+                    info += " Server Key Exchange";
+                    break;
+                }
+                case 14:{
+                    info += " Server Hello Done";
+                    break;
+                }
+                default:break;
+                }
+                break;
+            }
+            case 23:{
+                info = "Application Data";
+                break;
+            }
+            default:{
+                break;
+            }
+            }
+            return type;
+        }else type = 7;
     }
 
-    info += QString::number(src) + proSend+ "->" + QString::number(des) + proRecv;
-    QString flag = "";
-    if(tcp->flags & 0x08) flag += "PSH,";
-    if(tcp->flags & 0x10) flag += "ACK,";
-    if(tcp->flags & 0x02) flag += "SYN,";
-    if(tcp->flags & 0x20) flag += "URG,";
-    if(tcp->flags & 0x01) flag += "FIN,";
-    if(tcp->flags & 0x04) flag += "RST,";
-    if(flag != ""){
-        flag = flag.left(flag.length()-1);
-        info += " [" + flag + "]";
+    if(type == 7){
+        info = "Continuation Data";
     }
-    u_int sequeue = ntohl(tcp->sequence);
-    u_int ack = ntohl(tcp->ack);
-    u_short window = ntohs(tcp->window_size);
-    info += " Seq=" + QString::number(sequeue) + " Ack=" + QString::number(ack) + " win=" + QString::number(window) + " Len=" + QString::number(tcpPayLoad);
+    else{
+        info += QString::number(src) + proSend+ "->" + QString::number(des) + proRecv;
+        QString flag = "";
+        if(tcp->flags & 0x08) flag += "PSH,";
+        if(tcp->flags & 0x10) flag += "ACK,";
+        if(tcp->flags & 0x02) flag += "SYN,";
+        if(tcp->flags & 0x20) flag += "URG,";
+        if(tcp->flags & 0x01) flag += "FIN,";
+        if(tcp->flags & 0x04) flag += "RST,";
+        if(flag != ""){
+            flag = flag.left(flag.length()-1);
+            info += " [" + flag + "]";
+        }
+        u_int sequeue = ntohl(tcp->sequence);
+        u_int ack = ntohl(tcp->ack);
+        u_short window = ntohs(tcp->window_size);
+        info += " Seq=" + QString::number(sequeue) + " Ack=" + QString::number(ack) + " win=" + QString::number(window) + " Len=" + QString::number(tcpPayLoad);
+    }
     return type;
 }
 

@@ -16,9 +16,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    // construction and destruction
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    // show network card
     void showNetworkCard();
+    // capture the data package
     int capture();
 
 private slots:
@@ -31,14 +34,14 @@ public slots:
     void handleMessage(DataPackage data);
 private:
     Ui::MainWindow *ui;
-    pcap_if_t *all_devices; // all adapter device
-    pcap_if_t *device;      // An adapter
-    pcap_t *pointer;
-    ReadOnlyDelegate* readOnlyDelegate;
-    int countNumber;         // countNumber
-    int rowNumber;           // rowNumber
-    QVector<DataPackage>data;// store data
-    char errbuf[PCAP_ERRBUF_SIZE];
-    bool isStart;
+    pcap_if_t *all_devices;                 // all adapter device
+    pcap_if_t *device;                      // An adapter
+    pcap_t *pointer;                        // data package pointer
+    ReadOnlyDelegate* readOnlyDelegate;     // readonly detegate
+    int countNumber;                        // countNumber
+    int rowNumber;                          // rowNumber
+    QVector<DataPackage>data;               // store data
+    char errbuf[PCAP_ERRBUF_SIZE];          // error buffer
+    bool isStart;                           // the thread is start or not
 };
 #endif // MAINWINDOW_H

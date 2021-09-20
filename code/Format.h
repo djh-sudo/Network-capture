@@ -7,13 +7,20 @@
    @ if you have any question,pls contact me at djh113@126.com
 */
 
-// define some types
+// define some types and macro defination
 typedef unsigned char u_char;     // 1 byte
 typedef unsigned short u_short;   // 2 byte
 typedef unsigned int u_int;       // 4 byte
 typedef unsigned long u_long;     // 4 byte
-// Ethernet protocol format
 
+#define ARP  "ARP"                 //
+#define TCP  "TCP"                 //
+#define UDP  "UDP"                 //
+#define ICMP "ICMP"                //
+#define DNS  "DNS"                 //
+#define TLS  "TLS"                 //
+#define SSL  "SSL"                 //
+// Ethernet protocol format
 /*
 +-------------------+-----------------+------+
 |       6 byte      |     6 byte      |2 byte|
@@ -35,7 +42,7 @@ typedef struct ether_header{   // 14 byte
 +-------+-----------+---------------+-------------------------+
 |version|head length|  TOS/DS_byte  |        total length     |
 +-------------------+--+---+---+----+-+-+-+-------------------+
-|          identification           | |D|M|    offset         |
+|          identification           |R|D|M|    offset         |
 +-------------------+---------------+-+-+-+-------------------+
 |       ttl         |     protocal  |         checksum        |
 +-------------------+---------------+-------------------------+
@@ -179,7 +186,6 @@ typedef struct dns_answer{
     u_short dataLength;    // 2 byte
     //char* name           // Non-fixed
 }DNS_ANSWER;
-
 
 #endif // FORMAT_H
 

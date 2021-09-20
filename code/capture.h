@@ -17,7 +17,6 @@ public:
     bool setPointer(pcap_t *pointer);
     void setFlag();
     void resetFlag();
-
     int ethernetPackageHandle(const u_char *pkt_content,QString& info);
     int ipPackageHandle(const u_char *pkt_content,int&ipPackage);
     QString arpPackageHandle(const u_char *pkt_content);
