@@ -38,7 +38,7 @@ private:
     time_t local_time_version_sec;
     struct tm local_time;
     char timeString[16];
-    bool isDome;// done flag
+    volatile bool isDone;// done flag
 };
 
 #endif // CAPTURE_H

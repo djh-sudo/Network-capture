@@ -4,7 +4,7 @@
 
 
 Capture::Capture(){
-    this->isDome = false;
+    this->isDone = false;
     this->pointer = nullptr;
     this->header = nullptr;
     this->pkt_data = nullptr;
@@ -17,17 +17,17 @@ bool Capture::setPointer(pcap_t *pointer){
 }
 
 void Capture::setFlag(){
-    this->isDome = true;
+    this->isDone = true;
 }
 
 void Capture::resetFlag(){
-    this->isDome = false;
+    this->isDone = false;
 }
 
 QString Capture::byteToHex(u_char *str, int size){
     QString res = "";
     for(int i = 0;i < size;i++){
-        char one = str[i]>>4;
+        char one = str[i] >> 4;
         if(one >= 0x0A)
             one = one + 0x41 - 0x0A;
         else one = one + 0x30;
@@ -44,7 +44,7 @@ QString Capture::byteToHex(u_char *str, int size){
 void Capture::run(){
     unsigned int number_package = 0;
     while(true){
-        if(isDome)
+        if(isDone)
             break;
         int res = pcap_next_ex(pointer,&header,&pkt_data);
         if(res == 0)
