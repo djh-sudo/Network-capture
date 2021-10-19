@@ -5,6 +5,9 @@
 
 Capture::Capture(){
     this->isDome = false;
+    this->pointer = nullptr;
+    this->header = nullptr;
+    this->pkt_data = nullptr;
 }
 bool Capture::setPointer(pcap_t *pointer){
     this->pointer = pointer;
@@ -59,8 +62,10 @@ void Capture::run(){
             data.setDataLength(len);
             data.setPackagePointer(pkt_data,len);
             data.setPackageInfo(info);
-            emit send(data);
-            number_package++;
+            if(data.pkt_content != nullptr){
+                emit send(data);
+                number_package++;
+            }else continue;
         }
         else continue;
     }

@@ -221,6 +221,8 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
     int i = 0;
     if(index!=0){
         for(device = all_devices;i<index - 1;i++,device = device->next);
+    }else{
+        device = nullptr;
     }
     return;
 }

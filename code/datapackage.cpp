@@ -10,6 +10,7 @@ DataPackage::DataPackage()
     this->timeStamp = "";
     this->data_length = 0;
     this->packageType = 0;
+    this->pkt_content = nullptr;
 }
 
 void DataPackage::setDataLength(unsigned int length){
@@ -26,8 +27,10 @@ void DataPackage::setPackageType(int type){
 
 void DataPackage::setPackagePointer(const u_char *pkt_content,int size){
     this->pkt_content = (u_char*)malloc(size);
-    memcpy((char*)(this->pkt_content),pkt_content,size);
-    //    this->pkt_content = pkt_content;
+    if(this->pkt_content != nullptr)
+        memcpy((char*)(this->pkt_content),pkt_content,size);
+    else this->pkt_content = nullptr;
+    //  Do not use  `this->pkt_content = pkt_content;`
 }
 void DataPackage::setPackageInfo(QString info){
     this->info = info;
@@ -35,7 +38,7 @@ void DataPackage::setPackageInfo(QString info){
 QString DataPackage::byteToHex(u_char *str, int size){
     QString res = "";
     for(int i = 0;i < size;i++){
-        char one = str[i]>>4;
+        char one = str[i] >> 4;
         if(one >= 0x0A)
             one = one + 0x41 - 0x0A;
         else one = one + 0x30;
