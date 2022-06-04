@@ -1,0 +1,20 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource prefix="/">
+<file>img/analysis.png</file>
+<file>img/clear.png</file>
+<file>img/dir.png</file>
+<file>img/file.png</file>
+<file>img/clear_tree.png</file>
+<file>img/traffic.png</file>
+<file>img/IP.png</file>
+<file>img/port.png</file>
+<file>img/graph.png</file>
+<file>img/comprehensive.png</file>
+<file>img/dns.png</file>
+<file>img/US.png</file>
+<file>img/CN.png</file>
+<file>img/unknown.png</file>
+<file>img/error.png</file>
+</qresource>
+</RCC>
